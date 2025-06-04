@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prolog коли с различни правила и GIF</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 700px;
+      margin: 30px auto;
+      background: #f9f9f9;
+      color: #333;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      text-align: center;
+    }
+    textarea {
+      width: 90%;
+      max-width: 600px;
+      height: 120px;
+      font-family: monospace;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 2px solid #007acc;
+      padding: 8px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 25px;
+      font-size: 18px;
+      background-color: #007acc;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005f99;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      min-height: 30px;
+      font-weight: bold;
+      color: #004a99;
+    }
+    .car-container {
+      margin-top: 30px;
+      min-height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #d0e8ff;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #a0c4ff;
+    }
+    .car-gif {
+      max-width: 180px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #005f99;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prolog коли с различни правила и GIF</h1>
+
+  <textarea id="prolog-input">
+% Примери на заявки:
+is_sedan(X).
+is_suv(X).
+is_electric(X).
+  </textarea><br />
+  <button onclick="runProlog()">Изпълни</button>
+
+  <div id="result"></div>
+  <div class="car-container" id="car-animation"></div>
+
+  <script src="https://unpkg.com/tau-prolog"></script>
+  <script>
+    const session = pl.create();
+
+    // База знания с коли и правила
+    const knowledge = `
+      car(toyota_camry).
+      car(tesla_model_s).
+      car(bmw_x5).
+      car(nissan_leaf).
+
+      sedan(toyota_camry).
+      sedan(tesla_model_s).
+
+      suv(bmw_x5).
+
+      electric(tesla_model_s).
+      electric(nissan_leaf).
+
+      is_sedan(X) :- sedan(X).
+      is_suv(X) :- suv(X).
+      is_electric(X) :- electric(X).
+    `;
+
+    session.consult(knowledge);
+
+    const carAnimations = {
+      toyota_camry: '<img src="https://cdn.pixabay.com/photo/2014/04/03/00/40/toyota-camry-308370_1280.png" class="car-gif" alt="Toyota Camry" />',
+      tesla_model_s: '<img src="https://media.giphy.com/media/26FPJGjhefSJuaRhu/giphy.gif" class="car-gif" alt="Tesla Model S GIF" />',
+      bmw_x5: '<img src="https://cdn.pixabay.com/photo/2016/04/10/22/42/bmw-1329321_1280.png" class="car-gif" alt="BMW X5" />',
+      nissan_leaf: '<img src="https://cdn.pixabay.com/photo/2016/04/10/22/44/nissan-1329323_1280.png" class="car-gif" alt="Nissan Leaf" />'
+    };
+
+    function runProlog() {
+      const input = document.getElementById("prolog-input").value;
+      const resultDiv = document.getElementById("result");
+      const animDiv = document.getElementById("car-animation");
+
+      resultDiv.innerHTML = "";
+      animDiv.innerHTML = "";
+
+      session.query(input);
+      session.answers(answer => {
+        if(answer === false) {
+          resultDiv.innerHTML += `<p>Няма повече резултати.</p>`;
+          return;
+        }
+        const str = pl.format_answer(answer);
+        if (str === "false.") {
+          resultDiv.innerHTML = "<p>Няма резултати за тази заявка.</p>";
+          return;
+        }
+        resultDiv.innerHTML += `<p>${str}</p>`;
+
+        const match = str.match(/X = (\w+)/);
+        if (match) {
+          const car = match[1];
+          if (carAnimations[car]) {
+            animDiv.innerHTML = carAnimations[car];
+          } else {
+            animDiv.innerHTML = "<p>Няма GIF за тази кола.</p>";
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
