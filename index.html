@@ -5,80 +5,146 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Prolog коли с различни правила и GIF</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 700px;
-      margin: 30px auto;
-      background: #f9f9f9;
-      color: #333;
-      padding: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #6dd5fa, #2980b9);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      color: #f0f0f0;
+    }
+
+    .container {
+      background: #ffffffee;
+      max-width: 720px;
+      width: 100%;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
       text-align: center;
+      color: #222;
     }
+
+    h1 {
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #0d3b66;
+      text-shadow: 1px 1px 2px #a0c4ff;
+    }
+
     textarea {
-      width: 90%;
-      max-width: 600px;
-      height: 120px;
-      font-family: monospace;
+      width: 100%;
+      height: 140px;
+      font-family: 'Source Code Pro', monospace;
       font-size: 16px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 2px solid #007acc;
-      padding: 8px;
+      padding: 15px;
+      border: 2px solid #0d3b66;
+      border-radius: 10px;
       resize: vertical;
+      transition: border-color 0.3s ease;
     }
+    textarea:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 8px #2980b9aa;
+    }
+
     button {
-      margin-top: 15px;
-      padding: 10px 25px;
-      font-size: 18px;
-      background-color: #007acc;
+      margin-top: 20px;
+      background: #0d3b66;
+      color: #fff;
       border: none;
-      color: white;
-      border-radius: 8px;
+      border-radius: 12px;
+      padding: 12px 32px;
+      font-size: 18px;
+      font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      box-shadow: 0 6px 12px rgba(13,59,102,0.5);
     }
     button:hover {
-      background-color: #005f99;
+      background-color: #084a8e;
+      box-shadow: 0 8px 16px rgba(8,74,142,0.7);
     }
+    button:active {
+      transform: scale(0.98);
+    }
+
     #result {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 18px;
-      min-height: 30px;
-      font-weight: bold;
-      color: #004a99;
+      font-weight: 600;
+      min-height: 40px;
+      color: #104a8e;
+      background: #d0e8ff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: inset 0 0 10px #2980b9;
+      white-space: pre-wrap;
+      text-align: left;
     }
+
     .car-container {
       margin-top: 30px;
-      min-height: 160px;
+      padding: 20px;
+      background: #f0faff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(41, 128, 185, 0.3);
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #d0e8ff;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #a0c4ff;
+      min-height: 180px;
     }
+
     .car-gif {
-      max-width: 180px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #005f99;
+      max-width: 220px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(13, 59, 102, 0.6);
+      transition: transform 0.3s ease;
+    }
+    .car-gif:hover {
+      transform: scale(1.05);
+    }
+
+    /* Малки екрани */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+      button {
+        width: 100%;
+        font-size: 16px;
+        padding: 12px;
+      }
+      .car-gif {
+        max-width: 150px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Prolog коли с различни правила и GIF</h1>
+  <div class="container">
+    <h1>Prolog коли с различни правила и GIF</h1>
 
-  <textarea id="prolog-input">
+    <textarea id="prolog-input">
 % Примери на заявки:
 is_sedan(X).
 is_suv(X).
 is_electric(X).
-  </textarea><br />
-  <button onclick="runProlog()">Изпълни</button>
+    </textarea><br />
+    <button onclick="runProlog()">Изпълни</button>
 
-  <div id="result"></div>
-  <div class="car-container" id="car-animation"></div>
+    <div id="result"></div>
+    <div class="car-container" id="car-animation"></div>
+  </div>
 
   <script src="https://unpkg.com/tau-prolog"></script>
   <script>
@@ -114,19 +180,29 @@ is_electric(X).
     };
 
     function runProlog() {
-      const input = document.getElementById("prolog-input").value;
+      const input = document.getElementById("prolog-input").value.trim();
       const resultDiv = document.getElementById("result");
       const animDiv = document.getElementById("car-animation");
 
       resultDiv.innerHTML = "";
       animDiv.innerHTML = "";
 
+      if(input === "") {
+        resultDiv.innerHTML = "<p>Моля, въведете заявка.</p>";
+        return;
+      }
+
       session.query(input);
       session.answers(answer => {
         if(answer === false) {
-          resultDiv.innerHTML += `<p>Няма повече резултати.</p>`;
+          if(!resultDiv.innerHTML) {
+            resultDiv.innerHTML = `<p>Няма резултати за тази заявка.</p>`;
+          } else {
+            resultDiv.innerHTML += `<p>Няма повече резултати.</p>`;
+          }
           return;
         }
+
         const str = pl.format_answer(answer);
         if (str === "false.") {
           resultDiv.innerHTML = "<p>Няма резултати за тази заявка.</p>";
@@ -146,6 +222,5 @@ is_electric(X).
       });
     }
   </script>
-
 </body>
 </html>
